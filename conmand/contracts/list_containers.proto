@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package container;
+
+service ListContainers {
+  rpc GetContainers(GetContainersRequest) returns (GetContainersResponse);
+}
+
+message GetContainersRequest {
+  // Empty request for now, can be extended with filters later
+}
+
+message Container {
+  string name = 1;
+  optional int32 id = 2;
+  string dataset = 3;
+  repeated string addresses = 4;
+  bool running = 5;
+}
+
+message GetContainersResponse {
+  repeated Container containers = 1;
+}
