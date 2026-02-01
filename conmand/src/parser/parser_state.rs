@@ -175,7 +175,79 @@ mod test {
     #[test]
     fn test_seeking() {
         let current_state = ParserState::Seeking;
+        let next_state = current_state.next_state(' ');;
+        assert_eq!(next_state, ParserState::Seeking);
 
+        let next_state = current_state.next_state('#');;
+        assert_eq!(next_state, ParserState::Comment);
 
+        let next_state = current_state.next_state('a');
+        assert_eq!(next_state, ParserState::InDirective);
+
+        let next_state = current_state.next_state('}');;
+        assert_eq!(next_state, ParserState::EndBlock);
+
+        let next_state = current_state.next_state('{');
+        assert_eq!(next_state, ParserState::Invalid);
+    }
+
+    #[test]
+    fn test_comment() {
+        let current_state = ParserState::Comment;
+        let next_state = current_state.next_state(' ');
+        assert_eq!(next_state, ParserState::Comment);
+
+        let next_state = current_state.next_state('#');
+        assert_eq!(next_state, ParserState::Comment);
+
+        let next_state = current_state.next_state('a');
+        assert_eq!(next_state, ParserState::Comment);
+
+        let next_state = current_state.next_state(';');
+        assert_eq!(next_state, ParserState::Comment);
+
+        let next_state = current_state.next_state('\n');
+        assert_eq!(next_state, ParserState::Seeking);
+    }
+
+    #[test]
+    fn test_in_directive() {
+        let current_state = ParserState::InDirective;
+        let next_state = current_state.next_state(' ');
+        assert_eq!(next_state, ParserState::InDirective);
+
+        let next_state = current_state.next_state('#');
+        assert_eq!(next_state, ParserState::Comment);
+
+        let next_state = current_state.next_state('{');
+        assert_eq!(next_state, ParserState::InDirective);
+
+        let next_state = current_state.next_state('a');
+        assert_eq!(next_state, ParserState::InDirective);
+
+        let next_state = current_state.next_state('}');
+        assert_eq!(next_state, ParserState::InDirective);
+
+        let next_state = current_state.next_state(';');
+        assert_eq!(next_state, ParserState::Seeking);
+    }
+
+    #[test]
+    fn test_invalid() {
+        let current_state = ParserState::Invalid;
+        let next_state = current_state.next_state(' ');
+        assert_eq!(next_state, ParserState::Invalid);
+
+        let next_state = current_state.next_state('#');
+        assert_eq!(next_state, ParserState::Invalid);
+
+        let next_state = current_state.next_state('{');
+        assert_eq!(next_state, ParserState::Invalid);
+
+        let next_state = current_state.next_state('}');
+        assert_eq!(next_state, ParserState::Invalid);
+
+        let next_state = current_state.next_state('a');
+        assert_eq!(next_state, ParserState::Invalid);
     }
 }
