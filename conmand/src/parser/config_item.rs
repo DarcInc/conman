@@ -1,35 +1,45 @@
-use std::collections::HashMap;
+//!
+//! Copyright (c) 2026, Paul C. Hoehne
+//!
+//! Redistribution and use in source and binary forms, with or without modification, are
+//! permitted provided that the following conditions are met:
+//!
+//!   Redistributions of source code must retain the above copyright notice, this list of
+//!   conditions and the following disclaimer.
+//!
+//!   Redistributions in binary form must reproduce the above copyright notice, this list of
+//!   conditions and the following disclaimer in the documentation and/or other materials
+//!   provided with the distribution.
+//!
+//! THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+//! EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+//! MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+//! THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+//! SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+//! OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+//! HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+//! OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+//! SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//!
 
+/// Represents a configuration item, or a declaration inside the container definition.
+///
+/// * `raw` - The raw text encountered during tokenization
+///
 #[derive(Debug, Clone, PartialEq)]
-pub enum ConfigValue {
-    String(String),
-    Boolean(bool),
-    Array(Vec<String>),
-}
-
-
-#[derive(Debug, Clone)]
 pub struct ConfigItem {
-    pub name: String,
-    pub values: HashMap<String, ConfigValue>,
-    pub directives: Vec<String>,
+    pub raw: String,
 }
 
 impl ConfigItem {
-    pub fn new(name: &str) -> Self {
+
+    /// Creates a new ConfigItem
+    ///
+    /// * `raw` - The raw string for the item
+    pub fn new(raw: &str) -> Self {
         Self {
-            name: name.to_string(),
-            values: HashMap::new(),
-            directives: Vec::new(),
+            raw: raw.to_string(),
         }
-    }
-
-    pub fn add_value(&mut self, key: &str, value: &ConfigValue) {
-        self.values.insert(key.to_string(), value.clone());
-    }
-
-    pub fn add_directive(&mut self, directive: &str) {
-        self.directives.push(directive.to_string());
     }
 }
 
@@ -40,37 +50,6 @@ mod test {
     #[test]
     fn new_test() {
         let item = ConfigItem::new("foo");
-        assert_eq!("foo".to_string(), item.name);
-        assert_eq!(0, item.values.len());
-        assert_eq!(0, item.directives.len());
-    }
-
-    #[test]
-    fn add_value_test() {
-        let mut item = ConfigItem::new("foo");
-        item.add_value("bar", &ConfigValue::String("baz".to_string()));
-
-        assert_eq!(1, item.values.len());
-        assert!(item.values.contains_key("bar"));
-        assert_eq!(item.values.get("bar").unwrap(), &ConfigValue::String("baz".to_string()));
-
-        item.add_value("alpha", &ConfigValue::Boolean(true));
-        assert_eq!(2, item.values.len());
-        assert!(item.values.contains_key("alpha"));
-        assert_eq!(item.values.get("alpha").unwrap(), &ConfigValue::Boolean(true));
-
-        item.add_value("baker", &ConfigValue::Array(vec!["charlie".to_string()]));
-        assert_eq!(3, item.values.len());
-        assert!(item.values.contains_key("baker"));
-        assert_eq!(item.values.get("baker").unwrap(), &ConfigValue::Array(vec!["charlie".to_string()]));
-    }
-
-    #[test]
-    fn add_directive_test() {
-        let mut item = ConfigItem::new("foo");
-        item.add_directive("foo");
-
-        assert_eq!(1, item.directives.len());
-        assert_eq!(vec!["foo".to_string()], item.directives);
+        assert_eq!("foo".to_string(), item.raw);
     }
 }
